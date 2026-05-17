@@ -37,7 +37,7 @@ function Sidebar() {
       },
     };
 
-    axios.get("http://localhost:8080/chat/", config).then((response) => {
+    axios.get("${API_URL}/chat/", config).then((response) => {
       setConversations(response.data);
     });
   }, [refresh]);
