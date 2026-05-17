@@ -12,6 +12,7 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config";
 
 function CreateGroups() {
   const lightTheme = useSelector((state) => state.themeKey);
