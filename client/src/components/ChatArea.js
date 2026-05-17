@@ -30,7 +30,7 @@ function ChatArea() {
     };
     try {
       await axios.post(
-        "http://localhost:8080/message/",
+        "`${API_URL}/message/",
         {
           content: messageContent,
           chatId: chat_id,
