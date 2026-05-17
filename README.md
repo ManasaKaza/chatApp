@@ -1,9 +1,9 @@
-# 💬 ChatApp — Real-Time Chat Application
+# ChatApp — Real-Time Chat Application
 
 A full-stack chat application where users can sign up, log in, and have one-on-one or group conversations — all in real time.
 
 
-## ✨ Features
+## Features
 
 - **User Authentication** — Sign up with a username, email, and password. Log in securely with encrypted credentials.
 - **One-on-One Chat** — Search for other users and start a private conversation instantly.
@@ -13,7 +13,7 @@ A full-stack chat application where users can sign up, log in, and have one-on-o
 
 ---
 
-## 🛠️ Built With
+## Built With
 
 | Layer     | Technology                        |
 |-----------|-----------------------------------|
@@ -24,7 +24,7 @@ A full-stack chat application where users can sign up, log in, and have one-on-o
 
 ---
 
-## 📸 How It Works
+## How It Works
 
 1. **Sign Up / Log In** — Create an account or log in with your username and password.
 2. **Browse Users** — See a list of all registered users and start a chat with anyone.
@@ -35,7 +35,7 @@ A full-stack chat application where users can sign up, log in, and have one-on-o
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 chatApp/
