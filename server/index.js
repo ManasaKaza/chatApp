@@ -9,9 +9,10 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 app.use(
   cors({
-    origin: "*",
+    origin: "https://chatapp-client-ozix.onrender.com/",  
   })
 );
+
 
 app.use(express.json());
 
