@@ -21,7 +21,6 @@ function Login() {
 
   const loginHandler = async (e) => {
     setLoading(true);
-    console.log(data);
     try {
       const config = {
         headers: {
@@ -34,7 +33,6 @@ function Login() {
         data,
         config
       );
-      console.log("Login : ", response);
       setLogInStatus({ msg: "Success", key: Math.random() });
       setLoading(false);
       localStorage.setItem("userData", JSON.stringify(response));
@@ -44,8 +42,8 @@ function Login() {
         msg: "Invalid User name or Password",
         key: Math.random(),
       });
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const signUpHandler = async () => {
@@ -62,22 +60,24 @@ function Login() {
         data,
         config
       );
-      console.log(response);
       setSignInStatus({ msg: "Success", key: Math.random() });
-      navigate("/app/welcome");
       localStorage.setItem("userData", JSON.stringify(response));
       setLoading(false);
+      navigate("/app/welcome");
     } catch (error) {
-      console.log(error);
-      if (error.response.status === 405) {
-        setLogInStatus({
+      if (error.response && error.response.status === 405) {
+        setSignInStatus({
           msg: "User with this email ID already Exists",
           key: Math.random(),
         });
-      }
-      if (error.response.status === 406) {
-        setLogInStatus({
+      } else if (error.response && error.response.status === 406) {
+        setSignInStatus({
           msg: "User Name already Taken, Please take another one",
+          key: Math.random(),
+        });
+      } else {
+        setSignInStatus({
+          msg: "Error occurred during registration",
           key: Math.random(),
         });
       }
@@ -102,29 +102,27 @@ function Login() {
             <p className="login-text">Login to your Account</p>
             <TextField
               onChange={changeHandler}
-              id="standard-basic"
+              id="login-username"
               label="Enter User Name"
               variant="outlined"
               color="secondary"
               name="name"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
-                  // console.log(event);
+                if (event.code === "Enter") {
                   loginHandler();
                 }
               }}
             />
             <TextField
               onChange={changeHandler}
-              id="outlined-password-input"
+              id="login-password"
               label="Password"
               type="password"
               autoComplete="current-password"
               color="secondary"
               name="password"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
-                  // console.log(event);
+                if (event.code === "Enter") {
                   loginHandler();
                 }
               }}
@@ -133,7 +131,6 @@ function Login() {
               variant="outlined"
               color="secondary"
               onClick={loginHandler}
-              isLoading
             >
               Login
             </Button>
@@ -158,44 +155,41 @@ function Login() {
             <p className="login-text">Create your Account</p>
             <TextField
               onChange={changeHandler}
-              id="standard-basic"
+              id="signup-username"
               label="Enter User Name"
               variant="outlined"
               color="secondary"
               name="name"
               helperText=""
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
-                  // console.log(event);
+                if (event.code === "Enter") {
                   signUpHandler();
                 }
               }}
             />
             <TextField
               onChange={changeHandler}
-              id="standard-basic"
+              id="signup-email"
               label="Enter Email Address"
               variant="outlined"
               color="secondary"
               name="email"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
-                  // console.log(event);
+                if (event.code === "Enter") {
                   signUpHandler();
                 }
               }}
             />
             <TextField
               onChange={changeHandler}
-              id="outlined-password-input"
+              id="signup-password"
               label="Password"
               type="password"
               autoComplete="current-password"
               color="secondary"
               name="password"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
-                  // console.log(event);
+                if (event.code === "Enter") {
                   signUpHandler();
                 }
               }}

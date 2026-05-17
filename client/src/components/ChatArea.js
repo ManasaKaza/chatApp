@@ -4,7 +4,7 @@ import { IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import MessageSelf from "./MessageSelf";
 import MessageOthers from "./MessageOthers";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
@@ -16,39 +16,35 @@ function ChatArea() {
   const messagesEndRef = useRef(null);
   const dyParams = useParams();
   const [chat_id, chat_user] = dyParams._id.split("&");
-  // console.log(chat_id, chat_user);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const [allMessages, setAllMessages] = useState([]);
-  // console.log("Chat area id : ", chat_id._id);
-  // const refresh = useSelector((state) => state.refreshKey);
   const { refresh, setRefresh } = useContext(myContext);
   const [loaded, setloaded] = useState(false);
-  const sendMessage = () => {
-    // console.log("SendMessage Fired to", chat_id._id);
+
+  const sendMessage = async () => {
+    if (!messageContent.trim()) return;
     const config = {
       headers: {
         Authorization: `Bearer ${userData.data.token}`,
       },
     };
-    axios
-      .post(
+    try {
+      await axios.post(
         "http://localhost:8080/message/",
         {
           content: messageContent,
           chatId: chat_id,
         },
         config
-      )
-      .then(({ data }) => {
-        console.log("Message Fired");
-      });
+      );
+      setMessageContent("");
+      setRefresh(!refresh);
+    } catch (error) {
+      console.log("Error sending message:", error);
+    }
   };
-  // const scrollToBottom = () => {
-  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  // };
 
   useEffect(() => {
-    console.log("Users refreshed");
     const config = {
       headers: {
         Authorization: `Bearer ${userData.data.token}`,
@@ -59,9 +55,7 @@ function ChatArea() {
       .then(({ data }) => {
         setAllMessages(data);
         setloaded(true);
-        // console.log("Data from Acess Chat API ", data);
       });
-    // scrollToBottom();
   }, [refresh, chat_id, userData.data.token]);
 
   if (!loaded) {
@@ -107,9 +101,6 @@ function ChatArea() {
             <p className={"con-title" + (lightTheme ? "" : " dark")}>
               {chat_user}
             </p>
-            {/* <p className={"con-timeStamp" + (lightTheme ? "" : " dark")}>
-              {props.timeStamp}
-            </p> */}
           </div>
           <IconButton className={"icon" + (lightTheme ? "" : " dark")}>
             <DeleteIcon />
@@ -123,10 +114,8 @@ function ChatArea() {
               const sender = message.sender;
               const self_id = userData.data._id;
               if (sender._id === self_id) {
-                // console.log("I sent it ");
                 return <MessageSelf props={message} key={index} />;
               } else {
-                // console.log("Someone Sent it");
                 return <MessageOthers props={message} key={index} />;
               }
             })}
@@ -141,11 +130,8 @@ function ChatArea() {
               setMessageContent(e.target.value);
             }}
             onKeyDown={(event) => {
-              if (event.code == "Enter") {
-                // console.log(event);
+              if (event.code === "Enter") {
                 sendMessage();
-                setMessageContent("");
-                setRefresh(!refresh);
               }
             }}
           />
@@ -153,7 +139,6 @@ function ChatArea() {
             className={"icon" + (lightTheme ? "" : " dark")}
             onClick={() => {
               sendMessage();
-              setRefresh(!refresh);
             }}
           >
             <SendIcon />

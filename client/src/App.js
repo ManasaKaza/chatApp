@@ -8,15 +8,12 @@ import ChatArea from "./components/ChatArea";
 import Users from "./components/Users";
 import CreateGroups from "./components/CreateGroups";
 import Groups from "./components/Groups";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 function App() {
-  const dispatch = useDispatch();
   const lightTheme = useSelector((state) => state.themeKey);
   return (
     <div className={"App" + (lightTheme ? "" : "-dark")}>
-      {/* <MainContainer /> */}
-      {/* <Login /> */}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="app" element={<MainContainer />}>

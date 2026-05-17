@@ -9,15 +9,13 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { create } from "@mui/material/styles/createTransitions";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function CreateGroups() {
   const lightTheme = useSelector((state) => state.themeKey);
   const userData = JSON.parse(localStorage.getItem("userData"));
-  // console.log("Data from LocalStorage : ", userData);
   const nav = useNavigate();
   if (!userData) {
     console.log("User not Authenticated");
@@ -35,24 +33,26 @@ function CreateGroups() {
     setOpen(false);
   };
 
-  console.log("User Data from CreateGroups : ", userData);
-
-  const createGroup = () => {
+  const createGroup = async () => {
     const config = {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
     };
 
-    axios.post(
-      "http://localhost:8080/chat/createGroup",
-      {
-        name: groupName,
-        users: '["647d94aea97e40a17278c7e5","647d999e4c3dd7ca9a2e6543"]',
-      },
-      config
-    );
-    nav("/app/groups");
+    try {
+      await axios.post(
+        "http://localhost:8080/chat/createGroup",
+        {
+          name: groupName,
+          users: JSON.stringify([user._id]),
+        },
+        config
+      );
+      nav("/app/groups");
+    } catch (error) {
+      console.log("Error creating group:", error);
+    }
   };
 
   return (
@@ -69,8 +69,8 @@ function CreateGroups() {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This will create a create group in which you will be the admin and
-              other will be able to join this group.
+              This will create a group in which you will be the admin and
+              others will be able to join this group.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -99,7 +99,6 @@ function CreateGroups() {
           className={"icon" + (lightTheme ? "" : " dark")}
           onClick={() => {
             handleClickOpen();
-            // createGroup();
           }}
         >
           <DoneOutlineRoundedIcon />

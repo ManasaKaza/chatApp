@@ -12,29 +12,25 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/themeSlice";
 import axios from "axios";
-import { refreshSidebarFun } from "../features/refreshSidebar";
 import { myContext } from "./MainContainer";
 
 function Sidebar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const lightTheme = useSelector((state) => state.themeKey);
-  // const refresh = useSelector((state) => state.refreshKey);
   const { refresh, setRefresh } = useContext(myContext);
-  console.log("Context API : refresh : ", refresh);
   const [conversations, setConversations] = useState([]);
-  // console.log("Conversations of Sidebar : ", conversations);
   const userData = JSON.parse(localStorage.getItem("userData"));
-  // console.log("Data from LocalStorage : ", userData);
   const nav = useNavigate();
+
   if (!userData) {
     console.log("User not Authenticated");
     nav("/");
   }
 
   const user = userData.data;
+
   useEffect(() => {
-    // console.log("Sidebar : ", user.token);
     const config = {
       headers: {
         Authorization: `Bearer ${user.token}`,
@@ -42,11 +38,17 @@ function Sidebar() {
     };
 
     axios.get("http://localhost:8080/chat/", config).then((response) => {
-      console.log("Data refresh in sidebar ", response.data);
       setConversations(response.data);
-      // setRefresh(!refresh);
     });
   }, [refresh]);
+
+  // Helper to get the other user in a 1-on-1 chat
+  const getOtherUser = (users) => {
+    if (!users || users.length < 2) return null;
+    // Find the user that is NOT the logged-in user
+    const other = users.find((u) => u._id !== user._id);
+    return other || users[1];
+  };
 
   return (
     <div className="sidebar-container">
@@ -119,47 +121,42 @@ function Sidebar() {
       </div>
       <div className={"sb-conversations" + (lightTheme ? "" : " dark")}>
         {conversations.map((conversation, index) => {
-          // console.log("current convo : ", conversation);
           if (conversation.users.length === 1) {
             return <div key={index}></div>;
           }
+
+          const otherUser = getOtherUser(conversation.users);
+          if (!otherUser) return <div key={index}></div>;
+
           if (conversation.latestMessage === undefined) {
-            // console.log("No Latest Message with ", conversation.users[1]);
             return (
               <div
                 key={index}
                 onClick={() => {
-                  console.log("Refresh fired from sidebar");
-                  // dispatch(refreshSidebarFun());
                   setRefresh(!refresh);
                 }}
               >
                 <div
-                  key={index}
                   className="conversation-container"
                   onClick={() => {
                     navigate(
                       "chat/" +
                         conversation._id +
                         "&" +
-                        conversation.users[1].name
+                        otherUser.name
                     );
                   }}
-                  // dispatch change to refresh so as to update chatArea
                 >
                   <p className={"con-icon" + (lightTheme ? "" : " dark")}>
-                    {conversation.users[1].name[0]}
+                    {otherUser.name[0]}
                   </p>
                   <p className={"con-title" + (lightTheme ? "" : " dark")}>
-                    {conversation.users[1].name}
+                    {otherUser.name}
                   </p>
 
                   <p className="con-lastMessage">
                     No previous Messages, click here to start a new chat
                   </p>
-                  {/* <p className={"con-timeStamp" + (lightTheme ? "" : " dark")}>
-                {conversation.timeStamp}
-              </p> */}
                 </div>
               </div>
             );
@@ -173,23 +170,20 @@ function Sidebar() {
                     "chat/" +
                       conversation._id +
                       "&" +
-                      conversation.users[1].name
+                      otherUser.name
                   );
                 }}
               >
                 <p className={"con-icon" + (lightTheme ? "" : " dark")}>
-                  {conversation.users[1].name[0]}
+                  {otherUser.name[0]}
                 </p>
                 <p className={"con-title" + (lightTheme ? "" : " dark")}>
-                  {conversation.users[1].name}
+                  {otherUser.name}
                 </p>
 
                 <p className="con-lastMessage">
                   {conversation.latestMessage.content}
                 </p>
-                {/* <p className={"con-timeStamp" + (lightTheme ? "" : " dark")}>
-                {conversation.timeStamp}
-              </p> */}
               </div>
             );
           }
