@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/themeSlice";
 import axios from "axios";
 import { myContext } from "./MainContainer";
+import API_URL from "../config";
 
 function Sidebar() {
   const navigate = useNavigate();
