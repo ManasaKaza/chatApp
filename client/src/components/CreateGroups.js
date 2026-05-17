@@ -42,7 +42,7 @@ function CreateGroups() {
 
     try {
       await axios.post(
-        "http://localhost:8080/chat/createGroup",
+        "`${API_URL}/chat/createGroup",
         {
           name: groupName,
           users: JSON.stringify([user._id]),
